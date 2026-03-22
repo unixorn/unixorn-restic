@@ -1,0 +1,29 @@
+---
+services:
+  restic:
+    image: unixorn/restic:latest
+    container_name: restic
+    hostname: your_host_name
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID} # Set this in your .env file, or change to a hard coded value.
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY} # Set this in your .env
+      BACKUP_FROM: ${BACKUP_FROM:-/home}  # Change this to the path you want to backup. This is the path on the host, not the container.
+      EXCLUDE_FILE: ${EXCLUDE_FILE:-/exclude.txt} # Change this to the path of your exclude file. This is the path on the host, not the container.
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY} # Set this in your .env file, or change to a hard coded path.
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD} # Set this in your .env file, or change to a hard coded password. Make sure to use the same password for all containers accessing a repository or you will corrupt your backup repository.
+      RESTIC_BACKUP_SOURCES: /mnt/volumes # This is the path inside the container where the backup sources will be mounted. This should not be changed unless you change the volume mount.
+      RESTIC_COMPRESSION: auto
+      RESTORE_D: ${RESTORE_D:-./restore_d} # Will be mouned as /restore_d in the container. This is the path outside the container where you want to restore files to. This is optional, but if you want to use the restore functionality, you need to set this.
+      TZ: ${TZ:-America/Denver} # Set this in your .env file
+    volumes:
+      # Host Path : Container Path
+      - ${BACKUP_FROM:-/home}:/mnt/volumes
+      - ${EXCLUDE_FILE:-./exclude.txt}:/exclude-from-backups.txt:ro
+      - ${RESTORE_D:-./restore_d}:/restore_d
+    # volumes:
+    #   # Host Path : Container Path
+    #   - ${BACKUP_FROM:-/home}:/mnt/volumes # This is the path on the host where the backup sources are located. This is required.
+    #   - ${EXCLUDE_FILE:-./exclude.txt}:/exclude-from-backups.txt:ro # This is the path on the host where the exclude file is located. You will still have to specify the path to it in your restic commands
+    #   - ${RESTORE_D:-./restore_d}:/restore_d # This is the path outside the container where you want to restore files to. This is optional, but if you want to use the restore functionality, you need to set this.
+    security_opt:
+      - no-new-privileges:true
