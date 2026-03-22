@@ -12,7 +12,7 @@ services:
       RESTIC_REPOSITORY: ${RESTIC_REPOSITORY} # Set this in your .env file, or change to a hard coded path.
       RESTIC_PASSWORD: ${RESTIC_PASSWORD} # Set this in your .env file, or change to a hard coded password. Make sure to use the same password for all containers accessing a repository or you will corrupt your backup repository.
       RESTIC_BACKUP_SOURCES: /mnt/volumes # This is the path inside the container where the backup sources will be mounted. This should not be changed unless you change the volume mount.
-      RESTIC_COMPRESSION: auto 
+      RESTIC_COMPRESSION: auto
       RESTORE_D: ${RESTORE_D:-./restore_d} # Will be mouned as /restore_d in the container. This is the path outside the container where you want to restore files to. This is optional, but if you want to use the restore functionality, you need to set this.
       TZ: ${TZ:-America/Denver} # Set this in your .env file
     volumes:
